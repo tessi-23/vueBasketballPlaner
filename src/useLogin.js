@@ -1,5 +1,5 @@
 import {computed, readonly, ref} from "vue";
-import {pb} from '@/pocketbase.js'
+import {pb} from '@/pocketbase.js';
 
 // Make variable Singleton to not create multiple storages for currentUser
 // Move it out of the scope of the composable to make it a singleton automatically based on JS import/export
@@ -29,12 +29,6 @@ export function useLogin() {
         console.log('User logged out', currentUser.value);
     }
 
-    const register = () => {
-        // TODO add registering as a user
-        // create user in PB -> triggers E-Mail verification
-        alert('register: Implement me')
-    }
-
     const isLoggedIn = computed(() => !!currentUser.value);
 
     return {
@@ -42,6 +36,5 @@ export function useLogin() {
         currentUser: readonly(currentUser),
         login,
         logout,
-        register,
     }
 }

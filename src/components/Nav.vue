@@ -23,7 +23,7 @@ const {isLoggedIn, logout} = useLogin();
           <ul
             tabindex="0"
             class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-            <li><RouterLink to="/profile">Profile</RouterLink></li>
+            <li v-if="isLoggedIn"><RouterLink to="/profile">Profile</RouterLink></li>
             <li v-if="isLoggedIn">
               <RouterLink to="/login" @click="logout">Logout</RouterLink>
             </li>
