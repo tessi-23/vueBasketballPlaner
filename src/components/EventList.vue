@@ -17,24 +17,23 @@
         <div>
           <div>{{ event.title }} ({{ event.start }} - {{ event.end }})</div>
           <div class="text-xs uppercase font-semibold opacity-60">
-            {{ event.location }}
-            <div v-if="isLoggedIn">(participants: {{ event.participants.length }})</div>
+            {{ event.location }} <span v-if="isLoggedIn">(participants: {{ event.participants.length }})</span>
           </div>
         </div>
-        <button v-if="isLoggedIn" class="btn" @click="participants_modal.showModal()">Show participants</button>
+        <button v-if="isLoggedIn" class="btn" onclick="participants_modal.showModal()">Show participants</button>
       </li>
     </ul>
-
-    <dialog id="participants_modal" class="modal">
-      <div class="modal-box">
-        <h3 class="text-lg font-bold">Participants</h3>
-        <p class="py-4">TODO: User einfügen</p>
-        <div class="modal-action">
-          <form method="dialog">
-            <button class="btn">Close</button>
-          </form>
-        </div>
-      </div>
-    </dialog>
   </div>
+
+  <dialog id="participants_modal" class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Participants</h3>
+      <p class="py-4">TODO: User einfügen</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
 </template>

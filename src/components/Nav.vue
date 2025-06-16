@@ -1,6 +1,7 @@
 <script setup>
-import {useLogin} from "@/useLogin.js";
-const {isLoggedIn, logout} = useLogin();
+  import {useLogin} from "@/useLogin.js";
+  import EventForm from "@/components/EventForm.vue";
+  const {isLoggedIn, currentUser, logout} = useLogin();
 </script>
 
 
@@ -10,6 +11,7 @@ const {isLoggedIn, logout} = useLogin();
         <RouterLink to="/" class="btn btn-ghost text-xl">Home</RouterLink>
         <RouterLink to="/games" class="btn btn-ghost text-xl">Games</RouterLink>
         <RouterLink to="/trainings" class="btn btn-ghost text-xl">Trainings</RouterLink>
+        <EventForm v-if="isLoggedIn && currentUser.role.includes('admin')"></EventForm>
       </div>
       <div class="flex gap-2">
         <div class="dropdown dropdown-end">

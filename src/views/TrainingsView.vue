@@ -3,6 +3,7 @@
   import {useTeams} from "@/useTeams.js";
   import {useEvents} from "@/useEvents.js";
   import EventList from "@/components/EventList.vue";
+  import EventForm from "@/components/EventForm.vue";
 
   const {currentUser, isLoggedIn} = useLogin();
   const {currentUserTeams, getTeamOfCurrentUser} = useTeams();
