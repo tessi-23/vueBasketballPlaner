@@ -6,6 +6,7 @@ const {currentUser} = useLogin();
 const listOfTrainings = ref([]);
 const listOfGames = ref([]);
 const listOfEvents = ref([]);
+const userOfCurrentParticipants = ref([]);
 
 export function useEvents() {
     const getListOfAllEvents = async () => {
@@ -28,6 +29,20 @@ export function useEvents() {
         });
         console.log('All games:', record);
         listOfGames.value = record || [];
+    }
+
+    const getUserOfCurrentParticipants = async (event) => {
+        if(event === undefined) {
+            console.log('event undefined');
+            return null;
+        }
+        const record = await pb.collection('events').getOne(event.id, {
+            expand: 'participants',
+        });
+
+        console.log('Current participants with user:', record);
+
+        userOfCurrentParticipants.value = record.expand.participants || [];
     }
 
     const createEvent = async (team, type, title, start, end, location) => {
@@ -59,6 +74,8 @@ export function useEvents() {
         listOfTrainings,
         listOfGames,
         listOfEvents,
+        userOfCurrentParticipants,
+        getUserOfCurrentParticipants,
         getListOfAllEvents,
         getListOfGames,
         getListOfTrainings,

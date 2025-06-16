@@ -1,8 +1,12 @@
 <script setup>
+    import { ref } from 'vue';
     import {useLogin} from '@/useLogin.js';
     import {useEvents} from '@/useEvents.js';
-    const {isParticipant, updateParticipants} = useEvents();
+    const {isParticipant, updateParticipants, getUserOfCurrentParticipants, userOfCurrentParticipants} = useEvents();
     const { currentUser } = useLogin();
+
+    getUserOfCurrentParticipants();
+    const participantsModalRef = ref(null);
 
     defineProps({
       events: Array,
@@ -28,6 +32,11 @@
 
       event.participants = updatedParticipants; // im ui aktualisieren
     };
+
+    function openParticipantsModal(eventItem) {
+      getUserOfCurrentParticipants(eventItem);
+      participantsModalRef.value?.showModal();
+    }
 </script>
 
 <template>
@@ -36,28 +45,35 @@
     <ul v-if="events.length !== 0" class="list bg-base-100 rounded-box shadow-md">
       <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{{ title }}</li>
 
-      <li v-for="event in events" :key="event.id" class="list-row">
+      <li v-for="eventItem in events" :key="eventItem.id" class="list-row">
         <div><img class="size-10 rounded-box" src="../assets/basketball-icon.png"/></div>
         <div>
-          <div>{{ event.title }} ({{ event.start }} - {{ event.end }})</div>
+          <div>{{ eventItem.title }} ({{ eventItem.start }} - {{ eventItem.end }})</div>
           <div class="text-xs uppercase font-semibold opacity-60">
-            {{ event.location }} <span v-if="isLoggedIn">(participants: {{ event.participants.length }})</span>
+            {{ eventItem.location }} <span v-if="isLoggedIn">(participants: {{ eventItem.participants.length }})</span>
           </div>
         </div>
         <button v-if="isLoggedIn && currentUser.role.includes('player')" 
           class="btn btn-outline" 
-          @click="toggleParticipation(event)">
-          {{ isParticipant(event) ? 'Cancel' : 'Participate' }}
+          @click="toggleParticipation(eventItem)">
+          {{ isParticipant(eventItem) ? 'Cancel' : 'Participate' }}
         </button>
-        <button v-if="isLoggedIn" class="btn" onclick="participants_modal.showModal()">Show participants</button>
+        <button v-if="isLoggedIn" class="btn" @click="openParticipantsModal(eventItem)">Show participants
+        </button>
       </li>
     </ul>
   </div>
 
-  <dialog id="participants_modal" class="modal">
+  <dialog ref="participantsModalRef" class="modal">
     <div class="modal-box">
       <h3 class="text-lg font-bold">Participants</h3>
-      <p class="py-4">TODO: User einfügen</p>
+      <div v-if="userOfCurrentParticipants.length === 0">
+        <p class="text-sm text-gray-500">No participants yet.</p>
+      </div>
+      <div v-for="participant in userOfCurrentParticipants" :key="participant.id">
+        👤 {{ participant.username }}
+      </div>
+
       <div class="modal-action">
         <form method="dialog">
           <button class="btn">Close</button>
