@@ -30,12 +30,26 @@ export function useEvents() {
         listOfGames.value = record || [];
     }
 
+    const createEvent = async (team, type, title, start, end, location) => {
+        const newEvent = {
+            team_category: team,
+            type: type,
+            title: title,
+            start: start,
+            end: end,
+            location: location
+        };
+        await pb.collection('events').create(newEvent);
+        console.log('Event created: ', newEvent)
+    }
+
     return {
         listOfTrainings: readonly(listOfTrainings),
         listOfGames: readonly(listOfGames),
         listOfEvents: readonly(listOfEvents),
         getListOfAllEvents,
         getListOfGames,
-        getListOfTrainings
+        getListOfTrainings,
+        createEvent
     }
 }

@@ -1,4 +1,7 @@
 <script setup>
+    import {useLogin} from '@/useLogin.js';
+    const { currentUser } = useLogin();
+
     defineProps({
     events: Array,
     title: String,
@@ -20,6 +23,8 @@
             {{ event.location }} <span v-if="isLoggedIn">(participants: {{ event.participants.length }})</span>
           </div>
         </div>
+        <button v-if="isLoggedIn && currentUser.role.includes('player')" class="btn btn-outline btn-success">Participate</button>
+        <button v-if="isLoggedIn && currentUser.role.includes('player')" class="btn btn-outline btn-error">Cancel</button>
         <button v-if="isLoggedIn" class="btn" onclick="participants_modal.showModal()">Show participants</button>
       </li>
     </ul>
