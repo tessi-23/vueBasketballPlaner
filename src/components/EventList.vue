@@ -1,12 +1,33 @@
 <script setup>
     import {useLogin} from '@/useLogin.js';
+    import {useEvents} from '@/useEvents.js';
+    const {isParticipant, updateParticipants} = useEvents();
     const { currentUser } = useLogin();
 
     defineProps({
-    events: Array,
-    title: String,
-    isLoggedIn: Boolean
+      events: Array,
+      title: String,
+      isLoggedIn: Boolean
     });
+
+
+    const toggleParticipation = async (event) => {
+      const userId = currentUser.value?.id;
+      if (!userId) return;
+
+      // kopie erstellen, damit schreibbar
+      let updatedParticipants = [...(event.participants || [])]; 
+
+      if (isParticipant(event)) {
+        updatedParticipants = updatedParticipants.filter(id => id !== userId); // abmelden
+      } else {
+        updatedParticipants.push(userId); // anmelden
+      }
+      console.log('Aktuelle Teilnehmer:', updatedParticipants);
+      await updateParticipants(event.id, updatedParticipants);
+
+      event.participants = updatedParticipants; // im ui aktualisieren
+    };
 </script>
 
 <template>
@@ -23,8 +44,11 @@
             {{ event.location }} <span v-if="isLoggedIn">(participants: {{ event.participants.length }})</span>
           </div>
         </div>
-        <button v-if="isLoggedIn && currentUser.role.includes('player')" class="btn btn-outline btn-success">Participate</button>
-        <button v-if="isLoggedIn && currentUser.role.includes('player')" class="btn btn-outline btn-error">Cancel</button>
+        <button v-if="isLoggedIn && currentUser.role.includes('player')" 
+          class="btn btn-outline" 
+          @click="toggleParticipation(event)">
+          {{ isParticipant(event) ? 'Cancel' : 'Participate' }}
+        </button>
         <button v-if="isLoggedIn" class="btn" onclick="participants_modal.showModal()">Show participants</button>
       </li>
     </ul>

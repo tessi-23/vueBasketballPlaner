@@ -39,17 +39,31 @@ export function useEvents() {
             end: end,
             location: location
         };
-        await pb.collection('events').create(newEvent);
-        console.log('Event created: ', newEvent)
-    }
+        const record = await pb.collection('events').create(newEvent);
+        console.log('Event created: ', record);
+    };
+
+    const updateParticipants = async (eventId, participants) => {
+        const record = await pb.collection('events').update(eventId, {
+            participants: participants
+        });
+        console.log('Updated Participants: ', record);
+    };
+
+    const isParticipant = (event) => {
+        if (!currentUser.value || event.participants.length === 0) return false;
+        if (event.participants.includes(currentUser.value.id)) return true;
+    };
 
     return {
-        listOfTrainings: readonly(listOfTrainings),
-        listOfGames: readonly(listOfGames),
-        listOfEvents: readonly(listOfEvents),
+        listOfTrainings,
+        listOfGames,
+        listOfEvents,
         getListOfAllEvents,
         getListOfGames,
         getListOfTrainings,
-        createEvent
+        createEvent,
+        isParticipant,
+        updateParticipants
     }
 }
