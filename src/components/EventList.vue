@@ -1,0 +1,40 @@
+<script setup>
+    defineProps({
+    events: Array,
+    title: String,
+    isLoggedIn: Boolean
+    });
+</script>
+
+<template>
+  <div class="events">
+    <p v-if="events.length === 0" class="text-center text-sm opacity-60">No upcoming games.</p>
+    <ul v-if="events.length !== 0" class="list bg-base-100 rounded-box shadow-md">
+      <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{{ title }}</li>
+
+      <li v-for="event in events" :key="event.id" class="list-row">
+        <div><img class="size-10 rounded-box" src="../assets/basketball-icon.png"/></div>
+        <div>
+          <div>{{ event.title }} ({{ event.start }} - {{ event.end }})</div>
+          <div class="text-xs uppercase font-semibold opacity-60">
+            {{ event.location }}
+            <div v-if="isLoggedIn">(participants: {{ event.participants.length }})</div>
+          </div>
+        </div>
+        <button v-if="isLoggedIn" class="btn" @click="participants_modal.showModal()">Show participants</button>
+      </li>
+    </ul>
+
+    <dialog id="participants_modal" class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Participants</h3>
+        <p class="py-4">TODO: User einfügen</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+  </div>
+</template>
