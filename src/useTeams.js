@@ -4,6 +4,7 @@ import {useLogin} from "@/useLogin.js";
 const {currentUser} = useLogin();
 
 const currentUserTeams = ref([]);
+const listOfTeams = ref([]);
 
 export function useTeams() {
     const getTeamOfCurrentUser = async () => {
@@ -19,8 +20,18 @@ export function useTeams() {
         currentUserTeams.value = record.expand.teams || [];
     }
 
+    const getListOfTeams = async () => {
+        const record = await pb.collection('teams').getFullList({});
+        console.log('All teams:', record);
+        listOfTeams.value = record || [];
+    }
+
     return {
         currentUserTeams: readonly(currentUserTeams),
-        getTeamOfCurrentUser
+        listOfTeams: readonly(listOfTeams),
+        getTeamOfCurrentUser,
+        getListOfTeams
     }
+
+    
 }

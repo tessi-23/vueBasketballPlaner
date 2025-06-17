@@ -10,7 +10,9 @@ const userOfCurrentParticipants = ref([]);
 
 export function useEvents() {
     const getListOfAllEvents = async () => {
-        const record = await pb.collection('events').getFullList({});
+        const record = await pb.collection('events').getFullList({
+            expand: 'team_category',
+        });
         console.log('All events:', record);
         listOfEvents.value = record || [];
     }

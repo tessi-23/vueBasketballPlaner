@@ -1,12 +1,21 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, computed } from 'vue';
     import {useLogin} from '@/useLogin.js';
     import {useEvents} from '@/useEvents.js';
-    const {isParticipant, updateParticipants, getUserOfCurrentParticipants, userOfCurrentParticipants} = useEvents();
+    import {useTeams} from "@/useTeams.js";
+    const {isParticipant, updateParticipants, getUserOfCurrentParticipants, userOfCurrentParticipants, getListOfAllEvents, listOfEvents} = useEvents();
+    const {getListOfTeams, listOfTeams} = useTeams();
     const { currentUser } = useLogin();
 
-    getUserOfCurrentParticipants();
+    //getUserOfCurrentParticipants();
+    getListOfTeams();
+    getListOfAllEvents();
+
+    
+
     const participantsModalRef = ref(null); // ref für DOM Element dialog
+    const selectedTeamFilter = ref('');
+
 
     defineProps({
       events: Array,
@@ -37,18 +46,64 @@
       await getUserOfCurrentParticipants(eventItem);
       participantsModalRef.value?.showModal(); // dialog öffnen
     }
+
+    const filterByTeam = (teamName) => {
+      selectedTeamFilter.value = teamName;
+    };
+
+    const filteredEvents = computed(() => {
+      if (!selectedTeamFilter.value) return listOfEvents.value;
+
+      return listOfEvents.value.filter(event =>
+        event.expand?.team_category?.name === selectedTeamFilter.value
+      );
+    });
+
+
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('de-DE'); // 26.06.2025
+    }
+
+    function formatTime(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleTimeString('de-DE', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }); // zb 18:00
+    }
+
+
+    
+
 </script>
 
 <template>
+  <form class="filter">
+    <input class="btn btn-square" type="reset" value="x" @click="selectedTeamFilter = ''"/>
+    <input v-for="team in listOfTeams" :key="team.id"
+      class="btn"
+      type="radio"
+      name="teamFilter"
+      :value="team.name"
+      :aria-label="team.name"
+      @change="filterByTeam(team.name)"
+    />
+  </form>
+
+
   <div class="events">
-    <p v-if="events.length === 0" class="text-center text-sm opacity-60">No upcoming games.</p>
-    <ul v-if="events.length !== 0" class="list bg-base-100 rounded-box shadow-md">
+    <p v-if="filteredEvents.length === 0" class="text-center text-sm opacity-60">No upcoming games.</p>
+      <ul v-else class="list bg-base-100 rounded-box shadow-md">
+
       <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{{ title }}</li>
 
-      <li v-for="eventItem in events" :key="eventItem.id" class="list-row">
+      <li v-for="eventItem in filteredEvents" :key="eventItem.id" class="list-row">
         <div><img class="size-10 rounded-box" src="../assets/basketball-icon.png"/></div>
         <div>
-          <div>{{ eventItem.title }} ({{ eventItem.start }} - {{ eventItem.end }})</div>
+          {{ eventItem.title }} {{ formatDate(eventItem.start) }} ({{ formatTime(eventItem.start) }} - {{ formatTime(eventItem.end) }})
           <div class="text-xs uppercase font-semibold opacity-60">
             {{ eventItem.location }} <span v-if="isLoggedIn">(participants: {{ eventItem.participants.length }})</span>
           </div>
