@@ -28,5 +28,5 @@
     />
   </form> -->
 
-  <EventList :events="listOfTrainings" :title="'All Trainings'" :is-logged-in="isLoggedIn" />
+  <EventList :events="listOfTrainings" :title="'All Trainings'" :is-logged-in="isLoggedIn" :type="'training'" />
 </template>

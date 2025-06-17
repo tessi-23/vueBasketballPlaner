@@ -17,10 +17,11 @@
     const selectedTeamFilter = ref('');
 
 
-    defineProps({
+    const props = defineProps({
       events: Array,
       title: String,
-      isLoggedIn: Boolean
+      isLoggedIn: Boolean,
+      type: String,
     });
 
 
@@ -52,10 +53,10 @@
     };
 
     const filteredEvents = computed(() => {
-      if (!selectedTeamFilter.value) return listOfEvents.value;
-
+      // richtigen type filtern
       return listOfEvents.value.filter(event =>
-        event.expand?.team_category?.name === selectedTeamFilter.value
+        event.type === props.type &&
+        (!selectedTeamFilter.value || event.expand?.team_category?.name === selectedTeamFilter.value)
       );
     });
 

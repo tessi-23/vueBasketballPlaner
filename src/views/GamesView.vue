@@ -15,5 +15,5 @@
 
 
 <template>
-  <EventList :events="listOfGames" :title="'All Games'" :is-logged-in="isLoggedIn" />
+  <EventList :events="listOfGames" :title="'All Games'" :is-logged-in="isLoggedIn" :type="'game'"/>
 </template>
