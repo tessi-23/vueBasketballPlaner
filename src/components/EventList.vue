@@ -6,7 +6,7 @@
     const { currentUser } = useLogin();
 
     getUserOfCurrentParticipants();
-    const participantsModalRef = ref(null);
+    const participantsModalRef = ref(null); // ref für DOM Element dialog
 
     defineProps({
       events: Array,
@@ -33,9 +33,9 @@
       event.participants = updatedParticipants; // im ui aktualisieren
     };
 
-    function openParticipantsModal(eventItem) {
-      getUserOfCurrentParticipants(eventItem);
-      participantsModalRef.value?.showModal();
+    const openParticipantsModal = async (eventItem) => {
+      await getUserOfCurrentParticipants(eventItem);
+      participantsModalRef.value?.showModal(); // dialog öffnen
     }
 </script>
 
@@ -64,6 +64,7 @@
     </ul>
   </div>
 
+  <!-- ref mit dialog verknüpfen -->
   <dialog ref="participantsModalRef" class="modal">
     <div class="modal-box">
       <h3 class="text-lg font-bold">Participants</h3>

@@ -34,7 +34,7 @@ export function useEvents() {
     const getUserOfCurrentParticipants = async (event) => {
         if(event === undefined) {
             console.log('event undefined');
-            return null;
+            return;
         }
         const record = await pb.collection('events').getOne(event.id, {
             expand: 'participants',
