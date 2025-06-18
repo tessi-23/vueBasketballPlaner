@@ -82,7 +82,7 @@
 </script>
 
 <template>
-  <form class="filter">
+  <form class="filter my-4 mx-6">
     <input class="btn btn-square" type="reset" value="x" @click="selectedTeamFilter = ''"/>
     <input v-for="team in listOfTeams" :key="team.id"
       class="btn"
@@ -95,7 +95,7 @@
   </form>
 
 
-  <div class="events">
+  <div class="events mx-6">
     <p v-if="filteredEvents.length === 0" class="text-center text-sm opacity-60">No upcoming games.</p>
       <ul v-else class="list bg-base-100 rounded-box shadow-md">
 
@@ -125,7 +125,7 @@
     <div class="modal-box">
       <h3 class="text-lg font-bold">Participants</h3>
       <div v-if="userOfCurrentParticipants.length === 0">
-        <p class="text-sm text-gray-500">No participants yet.</p>
+        <p class="text-sm">No participants yet.</p>
       </div>
       <div v-for="participant in userOfCurrentParticipants" :key="participant.id">
         👤 {{ participant.username }}

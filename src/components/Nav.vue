@@ -1,22 +1,29 @@
 <script setup>
+  import { computed } from 'vue';
   import {useLogin} from "@/useLogin.js";
   import EventForm from "@/components/EventForm.vue";
   import { useDark, useToggle } from '@vueuse/core';
   const {isLoggedIn, currentUser, logout} = useLogin();
+ 
+  const isDark = useDark({
+    selector: 'body',
+    valueDark: 'dark',
+    valueLight: 'light',
+  });
 
-  const isDark = useDark(); // ist ein Ref<boolean>
-  const toggleDark = useToggle(isDark); // einfache Umschaltfunktion
-  const avatarUrl = currentUser.value?.avatar
-  ? `http://localhost:8090/api/files/_pb_users_auth_/${currentUser.value.id}/${currentUser.value.avatar}`
-  : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp';
+  const toggleDark = useToggle(isDark); 
 
+  const avatarUrl = computed(() => {
+    if (!currentUser.value?.avatar) return 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg';
+    return `http://localhost:8090/api/files/_pb_users_auth_/${currentUser.value.id}/${currentUser.value.avatar}`;
+  });
 </script>
 
 
 <template>
     <div class="navbar bg-base-100 shadow-sm">
       <div class="flex-1">
-        <RouterLink to="/" class="btn btn-ghost text-xl">Home</RouterLink>
+        <!-- <RouterLink to="/" class="btn btn-ghost text-xl">Home</RouterLink> -->
         <RouterLink to="/games" class="btn btn-ghost text-xl">Games</RouterLink>
         <RouterLink to="/trainings" class="btn btn-ghost text-xl">Trainings</RouterLink>
         <EventForm v-if="isLoggedIn && currentUser.role.includes('admin')"></EventForm>
@@ -30,9 +37,7 @@
             <div class="w-10 rounded-full">
               <img
                 :alt="currentUser?.username"
-                :src="currentUser?.avatar
-                  ? `http://localhost:8090/api/files/_pb_users_auth_/${currentUser.id}/${currentUser.avatar}`
-                  : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'"
+                :src="avatarUrl"
               />
             </div>
           </div>

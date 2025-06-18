@@ -11,7 +11,7 @@ const password = ref('');
 
 async function handleLogin() {
   await login(email.value, password.value);
-  await router.push('/');
+  await router.push('/trainings');
 }
 </script>
 
