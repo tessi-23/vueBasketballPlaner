@@ -11,5 +11,9 @@ import Nav from './components/Nav.vue';
   <RouterView />
 </template>
 
-<style scoped>
+<style>
+  .dark {
+    background: #252525;
+    color: white;
+  }
 </style>
