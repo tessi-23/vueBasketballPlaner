@@ -8,6 +8,9 @@ const listOfGames = ref([]);
 const listOfEvents = ref([]);
 const userOfCurrentParticipants = ref([]);
 
+
+
+
 export function useEvents() {
     const getListOfAllEvents = async () => {
         const record = await pb.collection('events').getFullList({

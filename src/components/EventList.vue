@@ -4,6 +4,7 @@
     import {useEvents} from '@/useEvents.js';
     import {useTeams} from "@/useTeams.js";
     import { useDateFormat, useNow } from '@vueuse/core';
+    import {useWebNotification} from "@vueuse/core";
     const {
       isParticipant, 
       updateParticipants, 
@@ -15,12 +16,20 @@
     const {getListOfTeams, listOfTeams} = useTeams();
     const { currentUser } = useLogin();
 
+    //const {show} = useWebNotification();
+    const { show } = useWebNotification({
+            title: 'Event hat 6 Teilnehmende',
+            dir: 'auto',
+            lang: 'de',
+            renotify: true,
+            tag: 'test',
+        });
+
     getListOfTeams();
     getListOfAllEvents();
 
     const participantsModalRef = ref(null); // ref für DOM Element dialog
     const selectedTeamFilter = ref('');
-    const formatted = useDateFormat(useNow(), 'DD.MM.YYYY (ddd)', { locales: 'de-DE' });
     const formatStartDate = (dateStr) => useDateFormat(dateStr, 'DD.MM.YYYY').value;
     const formatTime = (dateStr) => useDateFormat(dateStr, 'HH:mm').value;
 
@@ -48,6 +57,11 @@
       await updateParticipants(event.id, updatedParticipants);
 
       event.participants = updatedParticipants; // im ui aktualisieren
+
+      if (updatedParticipants.length === 6) {
+        show();
+        console.log('Notification sent: Dieses Training hat jetzt 6 Teilnehmer erreicht!');
+      }
     };
 
     const openParticipantsModal = async (eventItem) => {
