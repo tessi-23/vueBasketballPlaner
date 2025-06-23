@@ -2,16 +2,7 @@
   import { computed } from 'vue';
   import {useLogin} from "@/useLogin.js";
   import EventForm from "@/components/EventForm.vue";
-  import { useDark, useToggle } from '@vueuse/core';
-  const {isLoggedIn, currentUser, logout} = useLogin();
- 
-  const isDark = useDark({
-    selector: 'body',
-    valueDark: 'dark',
-    valueLight: 'light',
-  });
-
-  const toggleDark = useToggle(isDark); 
+  const {isLoggedIn, currentUser, logout} = useLogin(); 
 
   const avatarUrl = computed(() => {
     if (!currentUser.value?.avatar) return 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg';
@@ -29,9 +20,6 @@
         <EventForm v-if="isLoggedIn && currentUser.role.includes('admin')"></EventForm>
       </div>
       <div class="flex gap-2">
-        <button class="btn btn-sm" @click="toggleDark()">
-          {{ isDark ? '🌙 Dark' : '☀️ Light' }}
-        </button>
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
             <div class="w-10 rounded-full">

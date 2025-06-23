@@ -3,18 +3,26 @@
     import {useLogin} from '@/useLogin.js';
     import {useEvents} from '@/useEvents.js';
     import {useTeams} from "@/useTeams.js";
-    const {isParticipant, updateParticipants, getUserOfCurrentParticipants, userOfCurrentParticipants, getListOfAllEvents, listOfEvents} = useEvents();
+    import { useDateFormat, useNow } from '@vueuse/core';
+    const {
+      isParticipant, 
+      updateParticipants, 
+      getUserOfCurrentParticipants, 
+      userOfCurrentParticipants, 
+      getListOfAllEvents, 
+      listOfEvents
+    } = useEvents();
     const {getListOfTeams, listOfTeams} = useTeams();
     const { currentUser } = useLogin();
 
-    //getUserOfCurrentParticipants();
     getListOfTeams();
     getListOfAllEvents();
 
-    
-
     const participantsModalRef = ref(null); // ref für DOM Element dialog
     const selectedTeamFilter = ref('');
+    const formatted = useDateFormat(useNow(), 'DD.MM.YYYY (ddd)', { locales: 'de-DE' });
+    const formatStartDate = (dateStr) => useDateFormat(dateStr, 'DD.MM.YYYY').value;
+    const formatTime = (dateStr) => useDateFormat(dateStr, 'HH:mm').value;
 
 
     const props = defineProps({
@@ -23,7 +31,6 @@
       isLoggedIn: Boolean,
       type: String,
     });
-
 
     const toggleParticipation = async (event) => {
       const userId = currentUser.value?.id;
@@ -37,7 +44,7 @@
       } else {
         updatedParticipants.push(userId); // anmelden
       }
-      console.log('Aktuelle Teilnehmer:', updatedParticipants);
+      console.log('Aktuelle Teilnehmer: ', updatedParticipants);
       await updateParticipants(event.id, updatedParticipants);
 
       event.participants = updatedParticipants; // im ui aktualisieren
@@ -59,26 +66,6 @@
         (!selectedTeamFilter.value || event.expand?.team_category?.name === selectedTeamFilter.value)
       );
     });
-
-
-
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('de-DE'); // 26.06.2025
-    }
-
-    function formatTime(dateStr) {
-      const date = new Date(dateStr);
-      return date.toLocaleTimeString('de-DE', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      }); // zb 18:00
-    }
-
-
-    
-
 </script>
 
 <template>
@@ -104,7 +91,7 @@
       <li v-for="eventItem in filteredEvents" :key="eventItem.id" class="list-row">
         <div><img class="size-10 rounded-box" src="../assets/basketball-icon.png"/></div>
         <div>
-          {{ eventItem.title }} {{ formatDate(eventItem.start) }} ({{ formatTime(eventItem.start) }} - {{ formatTime(eventItem.end) }})
+          {{ formatStartDate(eventItem.start) }} ({{ formatTime(eventItem.start) }} - {{ formatTime(eventItem.end) }})
           <div class="text-xs uppercase font-semibold opacity-60">
             {{ eventItem.location }} <span v-if="isLoggedIn">(participants: {{ eventItem.participants.length }})</span>
           </div>
