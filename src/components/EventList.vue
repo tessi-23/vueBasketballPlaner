@@ -1,15 +1,14 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
     import {useLogin} from '@/useLogin.js';
     import {useEvents} from '@/useEvents.js';
     import {useTeams} from "@/useTeams.js";
     import { useDateFormat, useNow } from '@vueuse/core';
-    import {useWebNotification} from "@vueuse/core";
     import { useFilter } from '@/useFilter.js';
     import TeamFilter from '@/components/TeamFilter.vue';
     const {
       isParticipant, 
-      updateParticipants, 
+      toggleParticipation, 
       getUserOfCurrentParticipants, 
       userOfCurrentParticipants, 
       getListOfAllEvents, 
@@ -18,12 +17,7 @@
     const {getListOfTeams, listOfTeams} = useTeams();
     const { currentUser, getUserImage } = useLogin();
 
-    const { show, permissionGranted } = useWebNotification({
-      title: 'Event hat 6 Teilnehmende',
-      body: 'Dieses Training hat jetzt 6 Teilnehmer erreicht!',
-      renotify: true,
-      tag: 'test',
-    });
+
 
     getListOfTeams();
     getListOfAllEvents();
@@ -40,39 +34,6 @@
       isLoggedIn: Boolean,
       type: String,
     });
-
-    
-
-    const toggleParticipation = async (event) => {
-      const userId = currentUser.value?.id;
-      if (!userId) return;
-
-      // kopie erstellen, damit schreibbar
-      let updatedParticipants = [...(event.participants || [])]; 
-
-      if (isParticipant(event)) {
-        updatedParticipants = updatedParticipants.filter(id => id !== userId); // abmelden
-      } else {
-        updatedParticipants.push(userId); // anmelden
-      }
-      console.log('Aktuelle Teilnehmer: ', updatedParticipants);
-      await updateParticipants(event.id, updatedParticipants);
-
-      event.participants = updatedParticipants; // im ui aktualisieren
-
-      if (updatedParticipants.length === 6 && permissionGranted.value) {
-        show();
-        console.log('Notification sent: Dieses Training hat jetzt 6 Teilnehmer erreicht!');
-      } else if (updatedParticipants.length === 6) {
-        await requestPermission();
-        if(permissionGranted.value) {
-          show();
-          console.log('Notification sent after permission granted: Dieses Training hat jetzt 6 Teilnehmer erreicht!');
-        } else {
-          console.warn('Keine Berechtigung für Notifications.');
-        }
-      }
-    };
 
     const openParticipantsModal = async (eventItem) => {
       await getUserOfCurrentParticipants(eventItem);

@@ -1,12 +1,21 @@
-import {readonly, ref} from "vue";
+import {ref} from "vue";
 import {pb} from '@/pocketbase.js'
 import {useLogin} from "@/useLogin.js";
+import {useWebNotification} from "@vueuse/core";
+
 const {currentUser} = useLogin();
 
 const listOfTrainings = ref([]);
 const listOfGames = ref([]);
 const listOfEvents = ref([]);
 const userOfCurrentParticipants = ref([]);
+
+const { show, requestPermission } = useWebNotification({
+    title: 'Event kann stattfinden',
+    body: 'Dieses Event hat jetzt 6 Teilnehmende erreicht!',
+    renotify: true,
+    tag: 'event-notification',
+});
 
 
 
@@ -70,6 +79,44 @@ export function useEvents() {
         console.log('Updated Participants: ', record);
     };
 
+    const toggleParticipation = async (event) => {
+        const userId = currentUser.value?.id;
+        if (!userId) return;
+
+        // kopie erstellen, damit schreibbar
+        let updatedParticipants = [...(event.participants || [])]; 
+
+        if (isParticipant(event)) {
+            updatedParticipants = updatedParticipants.filter(id => id !== userId); // abmelden
+        } else {
+            updatedParticipants.push(userId); // anmelden
+        }
+        console.log('Aktuelle Teilnehmer: ', updatedParticipants);
+        await updateParticipants(event.id, updatedParticipants);
+
+        event.participants = updatedParticipants; // im ui aktualisieren
+
+
+        // webnotification
+        if (updatedParticipants.length === 6) {
+            if (Notification.permission === 'granted') {
+                show();
+                console.log('Notification sent: Dieses Event hat jetzt 6 Teilnehmende erreicht!');
+            } else if (Notification.permission === 'default') {
+                // Nur beim ersten Mal fragen
+                const result = await requestPermission();
+                if (result === 'granted') {
+                    show();
+                    console.log('Notification sent after permission granted.');
+                } else {
+                    console.warn('Benutzer hat Benachrichtigungen abgelehnt.');
+                }
+            } else {
+                console.warn('Keine Berechtigung für Notifications.');
+            }
+        }
+    };
+
     const isParticipant = (event) => {
         if (!currentUser.value || event.participants.length === 0) return false;
         if (event.participants.includes(currentUser.value.id)) return true;
@@ -86,6 +133,7 @@ export function useEvents() {
         getListOfTrainings,
         createEvent,
         isParticipant,
-        updateParticipants
+        updateParticipants,
+        toggleParticipation
     }
 }
