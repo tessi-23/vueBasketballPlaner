@@ -31,10 +31,25 @@ export function useLogin() {
 
     const isLoggedIn = computed(() => !!currentUser.value);
 
+    const currentUserImage = computed(() => {
+        if (!currentUser.value?.avatar) return 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg';
+        return `http://localhost:8090/api/files/_pb_users_auth_/${currentUser.value.id}/${currentUser.value.avatar}`;
+    });
+
+    function getUserImage(user) {
+        if (!user?.avatar) {
+            return 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg';
+        }
+        return `http://localhost:8090/api/files/_pb_users_auth_/${user.id}/${user.avatar}`;
+    }
+
+
     return {
         isLoggedIn,
         currentUser: readonly(currentUser),
+        currentUserImage: readonly(currentUserImage),
         login,
         logout,
+        getUserImage
     }
 }

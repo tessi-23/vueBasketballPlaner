@@ -1,13 +1,7 @@
 <script setup>
-  import { computed } from 'vue';
   import {useLogin} from "@/useLogin.js";
   import EventForm from "@/components/EventForm.vue";
-  const {isLoggedIn, currentUser, logout} = useLogin(); 
-
-  const avatarUrl = computed(() => {
-    if (!currentUser.value?.avatar) return 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg';
-    return `http://localhost:8090/api/files/_pb_users_auth_/${currentUser.value.id}/${currentUser.value.avatar}`;
-  });
+  const {isLoggedIn, currentUser, logout, currentUserImage} = useLogin(); 
 </script>
 
 
@@ -25,7 +19,7 @@
             <div class="w-10 rounded-full">
               <img
                 :alt="currentUser?.username"
-                :src="avatarUrl"
+                :src="currentUserImage"
               />
             </div>
           </div>

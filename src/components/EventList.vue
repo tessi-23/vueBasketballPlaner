@@ -14,7 +14,7 @@
       listOfEvents
     } = useEvents();
     const {getListOfTeams, listOfTeams} = useTeams();
-    const { currentUser } = useLogin();
+    const { currentUser, getUserImage } = useLogin();
 
     //const {show} = useWebNotification();
     const { show } = useWebNotification({
@@ -39,6 +39,11 @@
       title: String,
       isLoggedIn: Boolean,
       type: String,
+    });
+
+    const currentUserImage = computed(() => {
+        if (!currentUser.value?.avatar) return 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg';
+        return `http://localhost:8090/api/files/_pb_users_auth_/${currentUser.value.id}/${currentUser.value.avatar}`;
     });
 
     const toggleParticipation = async (event) => {
@@ -128,8 +133,12 @@
       <div v-if="userOfCurrentParticipants.length === 0">
         <p class="text-sm">No participants yet.</p>
       </div>
-      <div v-for="participant in userOfCurrentParticipants" :key="participant.id">
-        👤 {{ participant.username }}
+      <div v-for="participant in userOfCurrentParticipants" :key="participant.id"  class="flex items-center gap-3 mb-3">
+        <img
+          class="w-10 h-10 rounded-full object-cover"
+          :alt="participant.username"
+          :src="getUserImage(participant)"
+        /> <span>{{ participant.username }}</span>
       </div>
 
       <div class="modal-action">
