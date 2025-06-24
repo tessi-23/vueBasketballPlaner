@@ -5,6 +5,7 @@
     import {useTeams} from "@/useTeams.js";
     import { useDateFormat, useNow } from '@vueuse/core';
     import {useWebNotification} from "@vueuse/core";
+    import { useFilter } from '@/useFilter.js';
     const {
       isParticipant, 
       updateParticipants, 
@@ -16,7 +17,6 @@
     const {getListOfTeams, listOfTeams} = useTeams();
     const { currentUser, getUserImage } = useLogin();
 
-    //const {show} = useWebNotification();
     const { show } = useWebNotification({
             title: 'Event hat 6 Teilnehmende',
             dir: 'auto',
@@ -41,10 +41,7 @@
       type: String,
     });
 
-    const currentUserImage = computed(() => {
-        if (!currentUser.value?.avatar) return 'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg';
-        return `http://localhost:8090/api/files/_pb_users_auth_/${currentUser.value.id}/${currentUser.value.avatar}`;
-    });
+    
 
     const toggleParticipation = async (event) => {
       const userId = currentUser.value?.id;
@@ -78,13 +75,15 @@
       selectedTeamFilter.value = teamName;
     };
 
-    const filteredEvents = computed(() => {
-      // richtigen type filtern
-      return listOfEvents.value.filter(event =>
-        event.type === props.type &&
-        (!selectedTeamFilter.value || event.expand?.team_category?.name === selectedTeamFilter.value)
-      );
-    });
+    // const filteredEvents = computed(() => {
+    //   // richtigen type filtern
+    //   return listOfEvents.value.filter(event =>
+    //     event.type === props.type &&
+    //     (!selectedTeamFilter.value || event.expand?.team_category?.name === selectedTeamFilter.value)
+    //   );
+    // });
+
+    const { filteredEvents } = useFilter(listOfEvents, selectedTeamFilter, props.type); 
 </script>
 
 <template>

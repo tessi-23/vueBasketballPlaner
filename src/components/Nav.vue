@@ -11,7 +11,7 @@
         <!-- <RouterLink to="/" class="btn btn-ghost text-xl">Home</RouterLink> -->
         <RouterLink to="/games" class="btn btn-ghost text-xl">Games</RouterLink>
         <RouterLink to="/trainings" class="btn btn-ghost text-xl">Trainings</RouterLink>
-        <EventForm v-if="isLoggedIn && currentUser.role.includes('admin')"></EventForm>
+        <!-- <EventForm v-if="isLoggedIn && currentUser.role.includes('admin')"></EventForm> -->
       </div>
       <div class="flex gap-2">
         <div class="dropdown dropdown-end">

@@ -15,12 +15,18 @@ if (!currentUser.value && pb.authStore.isValid && pb.authStore.record) {
 export function useLogin() {
 
     const login = async (email, password) => {
-        const data = await pb.collection('users').authWithPassword(
-            email,
-            password,
-        );
-        currentUser.value = data.record;
-        console.log('User logged in', currentUser.value);
+        
+        try {
+                const data = await pb.collection('users').authWithPassword(
+                email,
+                password,
+            );
+            currentUser.value = data.record;
+            console.log('User logged in', currentUser.value);
+        } catch (err) {
+            console.error('Login failed:', err);
+            alert('Login failed: ' + err.message);
+        }
     }
 
     const logout = () => {
