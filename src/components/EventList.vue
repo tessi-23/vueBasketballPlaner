@@ -6,6 +6,7 @@
     import { useDateFormat, useNow } from '@vueuse/core';
     import { useFilter } from '@/useFilter.js';
     import TeamFilter from '@/components/TeamFilter.vue';
+    import ParticipantsModal from '@/components/ParticipantsModal.vue';
     const {
       isParticipant, 
       toggleParticipation, 
@@ -72,7 +73,14 @@
   </div>
 
   <!-- ref mit dialog verknüpfen -->
-  <dialog ref="participantsModalRef" class="modal">
+
+  <ParticipantsModal
+    ref="participantsModalRef"
+    :participants="userOfCurrentParticipants"
+    :getUserImage="getUserImage"
+  />
+
+  <!-- <dialog ref="participantsModalRef" class="modal">
     <div class="modal-box">
       <h3 class="text-lg font-bold">Participants</h3>
       <div v-if="userOfCurrentParticipants.length === 0">
@@ -92,5 +100,5 @@
         </form>
       </div>
     </div>
-  </dialog>
+  </dialog> -->
 </template>
