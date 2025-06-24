@@ -32,6 +32,4 @@ export function useTeams() {
         getTeamOfCurrentUser,
         getListOfTeams
     }
-
-    
 }

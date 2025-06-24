@@ -1,11 +1,12 @@
 <script setup>
-    import { ref, computed } from 'vue';
+    import { ref, onMounted } from 'vue';
     import {useLogin} from '@/useLogin.js';
     import {useEvents} from '@/useEvents.js';
     import {useTeams} from "@/useTeams.js";
     import { useDateFormat, useNow } from '@vueuse/core';
     import {useWebNotification} from "@vueuse/core";
     import { useFilter } from '@/useFilter.js';
+    import TeamFilter from '@/components/TeamFilter.vue';
     const {
       isParticipant, 
       updateParticipants, 
@@ -17,13 +18,12 @@
     const {getListOfTeams, listOfTeams} = useTeams();
     const { currentUser, getUserImage } = useLogin();
 
-    const { show } = useWebNotification({
-            title: 'Event hat 6 Teilnehmende',
-            dir: 'auto',
-            lang: 'de',
-            renotify: true,
-            tag: 'test',
-        });
+    const { show, permissionGranted } = useWebNotification({
+      title: 'Event hat 6 Teilnehmende',
+      body: 'Dieses Training hat jetzt 6 Teilnehmer erreicht!',
+      renotify: true,
+      tag: 'test',
+    });
 
     getListOfTeams();
     getListOfAllEvents();
@@ -60,9 +60,17 @@
 
       event.participants = updatedParticipants; // im ui aktualisieren
 
-      if (updatedParticipants.length === 6) {
+      if (updatedParticipants.length === 6 && permissionGranted.value) {
         show();
         console.log('Notification sent: Dieses Training hat jetzt 6 Teilnehmer erreicht!');
+      } else if (updatedParticipants.length === 6) {
+        await requestPermission();
+        if(permissionGranted.value) {
+          show();
+          console.log('Notification sent after permission granted: Dieses Training hat jetzt 6 Teilnehmer erreicht!');
+        } else {
+          console.warn('Keine Berechtigung für Notifications.');
+        }
       }
     };
 
@@ -71,34 +79,11 @@
       participantsModalRef.value?.showModal(); // dialog öffnen
     }
 
-    const filterByTeam = (teamName) => {
-      selectedTeamFilter.value = teamName;
-    };
-
-    // const filteredEvents = computed(() => {
-    //   // richtigen type filtern
-    //   return listOfEvents.value.filter(event =>
-    //     event.type === props.type &&
-    //     (!selectedTeamFilter.value || event.expand?.team_category?.name === selectedTeamFilter.value)
-    //   );
-    // });
-
     const { filteredEvents } = useFilter(listOfEvents, selectedTeamFilter, props.type); 
 </script>
 
 <template>
-  <form class="filter my-4 mx-6">
-    <input class="btn btn-square" type="reset" value="x" @click="selectedTeamFilter = ''"/>
-    <input v-for="team in listOfTeams" :key="team.id"
-      class="btn"
-      type="radio"
-      name="teamFilter"
-      :value="team.name"
-      :aria-label="team.name"
-      @change="filterByTeam(team.name)"
-    />
-  </form>
-
+  <TeamFilter :teams="listOfTeams" v-model:filter="selectedTeamFilter"/>
 
   <div class="events mx-6">
     <p v-if="filteredEvents.length === 0" class="text-center text-sm opacity-60">No upcoming games.</p>
