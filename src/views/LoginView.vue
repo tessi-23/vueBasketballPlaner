@@ -16,6 +16,7 @@ async function handleLogin() {
 </script>
 
 <template>
+  <div class="min-h-screen flex items-center justify-center">
     <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
     <legend class="fieldset-legend">Login</legend>
 
@@ -28,4 +29,5 @@ async function handleLogin() {
 
     <button class="btn btn-neutral mt-4" @click="handleLogin" v-bind:disabled="!email || !password">Login</button>
     </fieldset>
+  </div>
 </template>

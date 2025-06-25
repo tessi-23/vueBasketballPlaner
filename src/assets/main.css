@@ -5,7 +5,6 @@
 }
 
 #app {
-  max-width: 1280px;
   font-weight: normal;
 }
 
@@ -25,10 +24,6 @@ a,
 
 @media (min-width: 1024px) {
   #app {
-    max-width: 1280px;
     font-weight: normal;
-    /* display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem; */
   }
 }
