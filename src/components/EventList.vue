@@ -72,33 +72,9 @@
     </ul>
   </div>
 
-  <!-- ref mit dialog verknüpfen -->
-
   <ParticipantsModal
     ref="participantsModalRef"
     :participants="userOfCurrentParticipants"
     :getUserImage="getUserImage"
   />
-
-  <!-- <dialog ref="participantsModalRef" class="modal">
-    <div class="modal-box">
-      <h3 class="text-lg font-bold">Participants</h3>
-      <div v-if="userOfCurrentParticipants.length === 0">
-        <p class="text-sm">No participants yet.</p>
-      </div>
-      <div v-for="participant in userOfCurrentParticipants" :key="participant.id"  class="flex items-center gap-3 mb-3">
-        <img
-          class="w-10 h-10 rounded-full object-cover"
-          :alt="participant.username"
-          :src="getUserImage(participant)"
-        /> <span>{{ participant.username }}</span>
-      </div>
-
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn">Close</button>
-        </form>
-      </div>
-    </div>
-  </dialog> -->
 </template>

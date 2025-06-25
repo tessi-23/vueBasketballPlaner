@@ -1,7 +1,9 @@
 <script setup>
     import { ref } from 'vue';
     import {useEvents} from '@/useEvents.js';
+    import {useTeams} from "@/useTeams.js";
     const { createEvent } = useEvents();
+    const { getListOfTeams, listOfTeams } = useTeams();
 
     const eventTeam = ref('');
     const eventType = ref('');
@@ -44,14 +46,7 @@
                     </label>
                     <select v-model="eventTeam" class="select select-bordered w-full">
                     <option disabled value="">Select category</option>
-                    <option>Herren</option>
-                    <option>Damen</option>
-                    <option>U18 m</option>
-                    <option>U18 w</option>
-                    <option>U16 m</option>
-                    <option>U16 w</option>
-                    <option>U14 g</option>
-                    <option>U12 g</option>
+                    <option v-for="team in listOfTeams" :value="team.id" :key="team.id">{{ team.name }}</option>
                     </select>
                 </div>
 
@@ -101,7 +96,7 @@
 
                 <!-- Submit Button -->
                 <div class="flex justify-end">
-                    <button class="btn btn-primary" type="submit" @click="handleCreateEvent">Save</button>
+                    <button class="btn btn-primary mt-6 mr-2" type="submit" @click="handleCreateEvent">Save</button>
                     <div class="modal-action">
                         <form method="dialog">
                             <button class="btn">Close</button>

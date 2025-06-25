@@ -64,8 +64,8 @@ export function useEvents() {
             team_category: team,
             type: type,
             title: title,
-            start: start,
-            end: end,
+            start: start.replace('T', ' ') + ':00',
+            end: end.replace('T', ' ') + ':00',
             location: location
         };
         const record = await pb.collection('events').create(newEvent);

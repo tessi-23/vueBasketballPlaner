@@ -29,7 +29,3 @@ async function handleLogin() {
     <button class="btn btn-neutral mt-4" @click="handleLogin" v-bind:disabled="!email || !password">Login</button>
     </fieldset>
 </template>
-
-<style>
-
-</style>
